@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AÚRA | Absolute Luxury</title>
+    <style>
+        /* --- БАЗОВЫЕ НАСТРОЙКИ И ПЕРЕМЕННЫЕ --- */
+        :root {
+            --brand-chocolate: #56382D;
+            --bg-creme: #FDFBF7;
+            --text-dark: #1C1B1A;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-blur: blur(25px);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-creme);
+            color: var(--text-dark);
+            padding-bottom: 120px; /* Отступ под таббар */
+            overflow-x: hidden;
+        }
+
+        /* --- СЕТКА СТРАНИЦ (SPA ЭФФЕКТ) --- */
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ВЕРХНЯЯ ПАНЕЛЬ (ШАПКА) --- */
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(86, 56, 45, 0.1);
+            letter-spacing: 4px;
+            font-weight: 300;
+            color: var(--brand-chocolate);
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            background: rgba(253, 251, 247, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 99;
+        }
+
+        /* --- ГЛАВНЫЙ БАННЕР --- */
+        .hero {
+            position: relative;
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .hero p {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 300;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* --- СЕКЦИИ И ДИЗАЙН ИЗ HERMÈS ЛУКБУКА --- */
+        .section-title {
+            text-align: center;
+            padding: 40px 20px 15px;
+            font-size: 22px;
+            font-weight: 300;
+            color: var(--brand-chocolate);
+            letter-spacing: 1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #7A7571;
+            max-width: 320px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Сетка товаров */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 0 15px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background-color: #f0f0f0;
+        }
+
+        .product-info {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .product-title {
+            font-size: 13px;
+            font-weight: 400;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: var(--brand-chocolate);
+            font-weight: 500;
+        }
+
+        /* Большой промежуточный баннер */
+        .mid-banner {
+            width: calc(100% - 30px);
+            margin: 30px auto;
+            height: 450px;
+            background: url('https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+        }
+
+        /* --- ИНТЕРФЕЙС КОРЗИНЫ И ОФОРМЛЕНИЯ ЗАКАЗА --- */
+        .checkout-container, .cart-container {
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .checkout-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .checkout-img {
+            width: 120px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: #7A7571;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E2DCD5;
+            background-color: #FCFBFB;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--brand-chocolate);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 15px;
+            background: var(--brand-chocolate);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        /* --- СТЕКЛЯННЫЙ ТАББАР (iOS 2026 GLASSMORPHISM) --- */
+        .nav-wrapper {
+            position: fixed;
+            bottom: 25px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .glass-tabbar {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+        }
+
+        /* Элемент кнопки */
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: #3A3938;
+            cursor: pointer;
+            padding: 10px 0;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-item svg {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .tab-item span {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        /* Активное состояние кнопки */
+        .tab-item.active {
+            color: var(--brand-chocolate);
+        }
+
+        .tab-item:active svg {
+            transform: scale(0.85);
+        }
+
+        /* Стеклянная подложка-слайдер для активной кнопки */
+        .nav-indicator {
+            position: absolute;
+            left: 8px;
+            height: calc(100% - 16px);
+            width: calc((100% - 16px) / 5);
+            background: rgba(255, 255, 255, 0.45);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255,255,255,0.6);
+            border-radius: 28px;
+            z-index: 1;
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Счетчик товаров у иконки корзины */
+        .cart-badge {
+            position: absolute;
+            top: 4px;
+            right: 18px;
+            background: var(--brand-chocolate);
+            color: white;
+            font-size: 9px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Поиск и списки */
+        .search-container {
+            padding: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 14px 45px 14px 20px;
+            border-radius: 25px;
+            border: 1px solid #E2DCD5;
+            background: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7A7571;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <header onclick="switchPage('home', 0)">
+        AÚRA
+    </header>
+
+    <main id="home" class="page active">
+        <div class="hero">
+            <h2>Дома, цвета и компасы</h2>
+            <p>Историческая эстетика абсолютной роскоши в современном воплощении.</p>
+        </div>
+
+        <h3 class="section-title">Элегантность приглушилась</h3>
+        <p class="section-subtitle">Обувь и аксессуары вне времени, созданные вручную для ценителей подлинной приватности.</p>
+
+        <div class="products-grid">
+            <div class="product-card" onclick="openProduct('Шелковый платок Écorce', 320, 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=400&q=80')">
+                <img class="product-img" src="https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=400&q=80" alt="Платок">
+                <div class="product-info">
+                    <div class="product-title">Платок Écorce</div>
+                    <div class="product-price">$320</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openProduct('Кожаный браслет Équestre', 450, 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=400&q=80')">
+                <img class="product-img" src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=400&q=80" alt="Браслет">
+                <div class="product-info">
+                    <div class="product-title">Браслет Équestre</div>
+                    <div class="product-price">$450</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openProduct('Шляпа из соломки Brume', 580, 'https://images.unsplash.com/photo-1534215754734-18e55d13ce3a?auto=format&fit=crop&w=400&q=80')">
+                <img class="product-img" src="https://images.unsplash.com/photo-1534215754734-18e55d13ce3a?auto=format&fit=crop&w=400&q=80" alt="Шляпа">
+                <div class="product-info">
+                    <div class="product-title">Шляпа Brume</div>
+                    <div class="product-price">$580</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openProduct('Сандалии шоколадные Miel', 890, 'https://images.unsplash.com/photo-1562273589-2d5a7ef3365e?auto=format&fit=crop&w=400&q=80')">
+                <img class="product-img" src="https://images.unsplash.com/photo-1562273589-2d5a7ef3365e?auto=format&fit=crop&w=400&q=80" alt="Сандалии">
+                <div class="product-info">
+                    <div class="product-title">Сандалии Miel</div>
+                    <div class="product-price">$890</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mid-banner"></div>
+
+        <h3 class="section-title">Индивидуально разработанные маркировки</h3>
+        <p class="section-subtitle">Новая коллекция одежды закрытого кроя в глубоких кофейно-шоколадных тонах.</p>
+
+        <div class="products-grid">
+            <div class="product-card" onclick="openProduct('Мюли из замши Terre', 950, 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=400&q=80')">
+                <img class="product-img" src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=400&q=80" alt="Мюли">
+                <div class="product-info">
+                    <div class="product-title">Мюли Terre</div>
+                    <div class="product-price">$950</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openProduct('Лоферы аристократичные Noir', 1200, 'https://images.unsplash.com/photo-1614252369475-531eba835eb1?auto=format&fit=crop&w=400&q=80')">
+                <img class="product-img" src="https://images.unsplash.com/photo-1614252369475-531eba835eb1?auto=format&fit=crop&w=400&q=80" alt="Лоферы">
+                <div class="product-info">
+                    <div class="product-title">Лоферы Noir</div>
+                    <div class="product-price">$1,200</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="cart" class="page">
+        <div class="cart-container">
+            <h3 class="section-title">Ваш выбор</h3>
+            <div id="cart-content">
+                </div>
+        </div>
+    </main>
+
+    <main id="history" class="page">
+        <div class="hero" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80'); height: 40vh;">
+            <h2>Наследие & Путь</h2>
+        </div>
+        <div style="padding: 30px; line-height: 1.8; font-weight: 300; color: #4A4A4A; text-align: justify;">
+            <p style="margin-bottom: 20px;">Бренд <strong>AÚRA</strong> зародился как эстетическое размышление о тишине, приватности и статусе, который не требует громких логотипов. Мы используем сложную, скрытую фурнитуру и глубокий шоколадный оттенок <strong>#56382D</strong>.</p>
+            <p>Текущий этап — разработка концепции и подготовка к переходу на независимое кутюрное производство полного цикла в Италии для обеспечения абсолютного уровня качества.</p>
+        </div>
+    </main>
+
+    <main id="search" class="page">
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Поиск по коллекции AÚRA...">
+            <div class="empty-state">Введите название изделия или категорию ткани для поиска по архивам бренда.</div>
+        </div>
+    </main>
+
+    <main id="checkout" class="page">
+        <div class="checkout-container">
+            <div class="checkout-card">
+                <h3 id="checkout-item-title" style="text-align:center; font-weight:300; margin-bottom:15px; color:var(--brand-chocolate);">Название товара</h3>
+                <img id="checkout-item-img" class="checkout-img" src="" alt="">
+                <p id="checkout-item-price" style="text-align:center; font-weight:500; margin-bottom:20px;"></p>
+                
+                <div class="form-group">
+                    <label>Размер (Размерный ряд Absolute Luxury)</label>
+                    <input type="text" placeholder="Итальянский размер (например, 42, 44)">
+                </div>
+                <div class="form-group">
+                    <label>Имя Получателя</label>
+                    <input type="text" placeholder="ФИО">
+                </div>
+                <div class="form-group">
+                    <label>Адрес доставки (Конфиденциально)</label>
+                    <input type="text" placeholder="Город, Улица, Дом">
+                </div>
+                <div class="form-group">
+                    <label>Телефон / Telegram</label>
+                    <input type="text" placeholder="+7 (___) ___-__-__">
+                </div>
+                
+                <button class="btn-action" onclick="placeOrder()">Оформить закрытый заказ</button>
+                <button class="btn-action" style="background:none; color:var(--brand-chocolate); border: 1px solid var(--brand-chocolate);" onclick="addToCartCurrent()">Добавить в корзину</button>
+            </div>
+        </div>
+    </main>
+
+
+    <div class="nav-wrapper">
+        <div class="glass-tabbar">
+            <div class="nav-indicator" id="indicator"></div>
+
+            <button class="tab-item active" onclick="switchPage('home', 0)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Домой</span>
+            </button>
+
+            <button class="tab-item" onclick="switchPage('cart', 1)">
+                <div class="cart-badge" id="cart-count">0</div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span>Корзина</span>
+            </button>
+
+            <button class="tab-item" onclick="shareSite(2)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                <span>Поделиться</span>
+            </button>
+
+            <button class="tab-item" onclick="switchPage('history', 3)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>История</span>
+            </button>
+
+            <button class="tab-item" onclick="switchPage('search', 4)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Поиск</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация корзины
+        let cart = [];
+        let currentProduct = null;
+
+        // Переключение между страницами (SPA) и анимация стеклянного индикатора
+        function switchPage(pageId, index) {
+            // Скрываем все страницы
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Показываем нужную
+            document.getElementById(pageId).classList.add('active');
+
+            // Смена активного класса на кнопках
+            document.querySelectorAll('.tab-item').forEach((item, idx) => {
+                if(idx === index) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+
+            // Движение стеклянной подложки-индикатора
+            const indicator = document.getElementById('indicator');
+            indicator.style.transform = `translateX(${index * 100}%)`;
+
+            // Если открыли страницу корзины, перерисовываем ее содержимое
+            if(pageId === 'cart') {
+                renderCart();
+            }
+            
+            // Скролл наверх
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // Открытие карточки конкретного товара с формой оформления заказа
+        function openProduct(title, price, imgUrl) {
+            currentProduct = { title, price, imgUrl };
+            
+            document.getElementById('checkout-item-title').innerText = title;
+            document.getElementById('checkout-item-price').innerText = `$${price}`;
+            document.getElementById('checkout-item-img').src = imgUrl;
+            
+            // Скрываем текущие страницы и открываем экран заказа/чекаута
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('checkout').classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // Добавление в корзину
+        function addToCartCurrent() {
+            if(currentProduct) {
+                cart.push(currentProduct);
+                document.getElementById('cart-count').innerText = cart.length;
+                alert(`Изделие "${currentProduct.title}" успешно добавлено в вашу корзину.`);
+                switchPage('home', 0);
+            }
+        }
+
+        // Отрисовка корзины
+        function renderCart() {
+            const cartContent = document.getElementById('cart-content');
+            if(cart.length === 0) {
+                cartContent.innerHTML = `<div class="empty-state">Ваша кутюрная корзина пуста.<br><br><button class="btn-action" style="max-width:200px; margin:0 auto;" onclick="switchPage('home', 0)">К коллекции</button></div>`;
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                html += `
+                    <div style="display:flex; background:white; padding:15px; border-radius:12px; margin-bottom:15px; align-items:center; border: 1px solid rgba(0,0,0,0.05);">
+                        <img src="${item.imgUrl}" style="width:60px; height:75px; object-fit:cover; border-radius:6px; margin-right:15px;">
+                        <div style="flex:1;">
+                            <h4 style="font-size:14px; font-weight:400;">${item.title}</h4>
+                            <p style="color:var(--brand-chocolate); font-weight:500; font-size:14px; margin-top:5px;">$${item.price}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#C33; font-size:12px; cursor:pointer; padding:10px;">Удалить</button>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div style="margin-top:30px; border-top:1px solid #E2DCD5; padding-top:20px; text-align:right;">
+                    <span style="font-weight:300; font-size:15px; margin-right:10px;">Итого:</span>
+                    <span style="font-size:20px; font-weight:500; color:var(--brand-chocolate);">$${total}</span>
+                </div>
+                <button class="btn-action" onclick="alert('Все товары из корзины переданы личному менеджеру для подтверждения.')">Подтвердить весь заказ</button>
+            `;
+            cartContent.innerHTML = html;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            document.getElementById('cart-count').innerText = cart.length;
+            renderCart();
+        }
+
+        // Оформление одиночного заказа
+        function placeOrder() {
+            alert('Ваш приватный запрос принят. Наш ассистент свяжется с вами в течение 15 минут для подтверждения мерок.');
+            switchPage('home', 0);
+        }
+
+        // Логика кнопки «Поделиться» (Web Share API)
+        function shareSite(index) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'AÚRA | Absolute Luxury',
+                    text: 'Концепт премиального бренда одежды AÚRA',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Если браузер не поддерживает Share API
+                alert('Ссылка на закрытый сайт скопирована в буфер обмена.');
+                navigator.clipboard.writeText(window.location.href);
+            }
+        }
+    </script>
+</body>
+</html>
+
